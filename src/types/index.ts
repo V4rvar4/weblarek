@@ -1,17 +1,10 @@
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
-
-export type TProductId = string;
+export type TPayment = 'online' | 'upon-receipt' | '';
 
 export interface IApi {
-    get<T extends object>(uri: string): Promise<T>;
-    post<T extends object>(
-        uri: string,
-        data: object,
-        method?: ApiPostMethods,
-    ): Promise<T>;
+  get<T extends object>(uri: string): Promise<T>;
+  post<T extends object>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
 }
-
-export type TPayment = 'online' | 'upon-receipt' | '';
 
 export interface IProduct {
   id: string;
@@ -19,7 +12,7 @@ export interface IProduct {
   image: string;
   title: string;
   category: string;
-  price: number | null; 
+  price: number | null;
 }
 
 export interface IBuyer {
@@ -30,8 +23,8 @@ export interface IBuyer {
 }
 
 export interface IOrder extends IBuyer {
+  items: string[];
   total: number;
-  items: TProductId[];
 }
 
 export interface IOrderResult {

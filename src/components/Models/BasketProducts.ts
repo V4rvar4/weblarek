@@ -1,42 +1,44 @@
-import { IProduct } from '../../types';
+import { IProduct } from "../../types";
+import { EventEmitter } from '../base/Events';
 
 export class BasketProducts {
-    private _items: IProduct[];
+    items: IProduct[] = [];
 
-    constructor() {
-        this._items = [];
+    protected events: EventEmitter;
+
+    constructor(events: EventEmitter) {
+        this.events = events;
     }
 
-    getItems(): IProduct[] {
-        return this._items;
+    add(item: IProduct): void {
+        this.items.push(item);
+        this.events.emit("basket:changed");
     }
 
-    addItem(item: IProduct): void {
-        this._items.push(item);
-    }
-
-    removeItem(item: IProduct): void {
-        const index = this._items.findIndex(cartItem => cartItem.id === item.id);
+    remove(id: string): void {
+        const index = this.items.findIndex(item => item.id === id);
         if (index !== -1) {
-            this._items.splice(index, 1);
+            this.items.splice(index, 1);
+            this.events.emit("basket:changed");
         }
     }
 
-    clearCart(): void {
-        this._items = [];
+    clear(): void {
+        this.items = [];
+        this.events.emit("basket:changed");
     }
 
-    getTotalPrice(): number {
-        return this._items.reduce((total, item) => {
+    getTotal(): number {
+        return this.items.reduce((total, item) => {
             return total + (item.price || 0);
         }, 0);
     }
 
-    getItemsCount(): number {
-        return this._items.length;
+    getCount(): number {
+        return this.items.length;
     }
 
-    checkProductInCart(id: string): boolean {
-        return this._items.some(item => item.id === id);
+    contains(id: string): boolean {
+        return this.items.some(item => item.id === id);
     }
 }

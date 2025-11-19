@@ -1,68 +1,65 @@
-import { IBuyer, TPayment } from '../../types';
+import { IBuyer, TPayment } from "../../types";
+import { EventEmitter } from '../base/Events';
 
-type IBuyerValidationResult = Partial<Record<keyof IBuyer, string>>;
+export type IBuyerValidationResult = Partial<Record<keyof IBuyer, string>>;
+export type TOrderErrors = Pick<IBuyerValidationResult, "payment" | "address">;
+export type TContactsErrors = Pick<IBuyerValidationResult, "email" | "phone">;
 
 export class User {
-    private _payment: TPayment;
-    private _email: string;
-    private _phone: string;
-    private _address: string;
+    payment: TPayment = '';
+    address: string = "";
+    email: string = "";
+    phone: string = "";
 
-    constructor() {
-        this._payment = '';
-        this._email = '';
-        this._phone = '';
-        this._address = '';
+    protected events: EventEmitter;
+
+    constructor(events: EventEmitter) {
+        this.events = events;
     }
 
     setData(data: Partial<IBuyer>): void {
         if (data.payment !== undefined) {
-            this._payment = data.payment;
-        }
-        if (data.email !== undefined) {
-            this._email = data.email;
-        }
-        if (data.phone !== undefined) {
-            this._phone = data.phone;
+            this.payment = data.payment;
+            this.events.emit("order:updated");
         }
         if (data.address !== undefined) {
-            this._address = data.address;
+            this.address = data.address;
+            this.events.emit("order:updated");
+        }
+        if (data.email !== undefined) {
+            this.email = data.email;
+            this.events.emit("contacts:updated");
+        }
+        if (data.phone !== undefined) {
+            this.phone = data.phone;
+            this.events.emit("contacts:updated");
         }
     }
 
     getData(): IBuyer {
         return {
-            payment: this._payment,
-            email: this._email,
-            phone: this._phone,
-            address: this._address
+            payment: this.payment,
+            address: this.address,
+            email: this.email,
+            phone: this.phone,
         };
     }
 
-    clearData(): void {
-        this._payment = '';
-        this._email = '';
-        this._phone = '';
-        this._address = '';
+    clear(): void {
+        this.payment = '';
+        this.address = "";
+        this.email = "";
+        this.phone = "";
+        this.events.emit("order:updated");
+        this.events.emit("contacts:updated");
     }
 
     validate(): IBuyerValidationResult {
         const errors: IBuyerValidationResult = {};
-        if (!this._payment) {
-            errors.payment = 'Не выбран вид оплаты';
-        }
-
-        if (!this._email.trim()) {
-            errors.email = 'Укажите email';
-        }
-
-        if (!this._phone.trim()) {
-            errors.phone = 'Укажите телефон';
-        }
-
-        if (!this._address.trim()) {
-            errors.address = 'Укажите адрес';
-        }
+        if (!this.payment) errors.payment = "Не выбран вид оплаты";
+        if (!this.address.trim()) errors.address = "Укажите адрес";
+        if (!this.email.trim()) errors.email = "Укажите email";
+        if (!this.phone.trim()) errors.phone = "Укажите телефон";
         return errors;
     }
 }

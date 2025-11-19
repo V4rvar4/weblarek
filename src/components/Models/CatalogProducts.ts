@@ -1,31 +1,32 @@
-import { IProduct } from '../../types';
+import { IProduct } from "../../types";
+import { EventEmitter } from '../base/Events';
 
 export class CatalogProducts {
-    private _items: IProduct[];
-    private _previewItem: IProduct | null;
+    items: IProduct[] = [];
+    previewItem: IProduct | null = null;
 
-    constructor() {
-        this._items = [];
-        this._previewItem = null;
+    protected events: EventEmitter;
+
+    constructor(events: EventEmitter) {
+        this.events = events;
     }
 
     setItems(items: IProduct[]): void {
-        this._items = items;
-    }
-
-    getItems(): IProduct[] {
-        return this._items;
+        this.items = items;
+        this.events.emit("catalog:changed");
     }
 
     getProduct(id: string): IProduct | undefined {
-        return this._items.find(item => item.id === id);
+        return this.items.find(item => item.id === id);
     }
 
-    setPreviewItem(item: IProduct): void {
-        this._previewItem = item;
+    setPreview(item: IProduct): void {
+        this.previewItem = item;
+        this.events.emit("catalog:preview", item);
     }
 
-    getPreviewItem(): IProduct | null {
-        return this._previewItem;
+    clearPreview(): void {
+        this.previewItem = null;
+        this.events.emit("catalog:previewClosed");
     }
 }
