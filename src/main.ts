@@ -5,12 +5,12 @@ import { Api } from './components/base/Api';
 import { API_URL } from './utils/constants';
 import { ApiService } from './components/ApiService';
 
-// Models
+
 import { CatalogProducts } from './components/Models/CatalogProducts';
 import { BasketProducts } from './components/Models/BasketProducts';
 import { User } from './components/Models/User';
 
-// Views
+
 import { GalleryView } from './components/View/Gallery';
 import { CardCatalogView } from './components/View/Cards/CardCatalog';
 import { CardPreviewView } from './components/View/Cards/CardPreview';
@@ -28,15 +28,15 @@ import { IProduct, IBuyer, IOrder, IOrderResult } from './types';
 
 export const events = new EventEmitter();
 
-// Models
+
 const catalog = new CatalogProducts(events);
 const basket = new BasketProducts(events);
 const user = new User(events);
 
-// API layer
+
 const apiService = new ApiService(new Api(API_URL));
 
-// Templates for views
+
 const cardCatalogTemplate = ensureElement<HTMLTemplateElement>("#card-catalog");
 const cardPreviewTemplate = ensureElement<HTMLTemplateElement>("#card-preview");
 const basketTemplate = ensureElement<HTMLTemplateElement>("#basket");
@@ -125,7 +125,7 @@ events.on("basket:changed", () => {
         return itemView.render({
             title: product.title,
             price: product.price ?? null,
-            index: index,
+            index: index + 1,
         });
     });
 

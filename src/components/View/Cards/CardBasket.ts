@@ -28,6 +28,6 @@ export class CardBasketView extends CardView<ICardBasketData> {
     }
 
     set index(value: number) {
-        this._index.textContent = String(value + 1);
+        this._index.textContent = String(value);
     }
 }
